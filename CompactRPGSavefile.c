@@ -342,6 +342,7 @@ uint32_t get_skills_packed(uint32_t *packed)
 }
 //Combat Functions
 
+
 int main()
 {
     /*
