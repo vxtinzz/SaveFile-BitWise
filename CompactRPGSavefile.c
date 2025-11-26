@@ -225,7 +225,9 @@ void set_flag_bit_packed(int bitIndex, uint32_t *packed)
     if (bitIndex < 5 && bitIndex >= 0)
     {
         *packed |= (1u << (bitIndex + SH_FLAGS));
-    }else{
+    }
+    else
+    {
         printf("Invalid BitIndex!");
     }
 }
@@ -323,9 +325,12 @@ uint32_t get_class_packed(uint32_t *packed)
 
 uint32_t get_flag_bit_packed(int bitindex, uint32_t *packed)
 {
-    if(bitindex >= 0 && bitindex < 5){
+    if (bitindex >= 0 && bitindex < 5)
+    {
         return (*packed >> (bitindex + SH_FLAGS)) & 1u;
-    }else{
+    }
+    else
+    {
         printf("Invalid BitIndex");
         return 0;
     }
@@ -340,8 +345,49 @@ uint32_t get_skills_packed(uint32_t *packed)
 {
     return (*packed >> SH_SKILLS) & MSK_SKILLS;
 }
-//Combat Functions
+// Combat Functions
+void apply_damage_packed(uint32_t *packed, int damage)
+{
+    int life = (*packed >> SH_LIFE) & MSK_LIFE;
+    life -= damage;
+    if (life <= 0)
+    {
+        life = 0;
+    }
+    *packed &= ~(MSK_LIFE << SH_LIFE);
+    *packed |= (life & MSK_LIFE) << SH_LIFE;
+}
 
+struct Character apply_damage_struct(Character *c, int damage)
+{
+    c->life -= damage;
+    if (c->life <= 0)
+    {
+        c->life = 0;
+    }
+    return *c;
+}
+void apply_heal_packed(uint32_t *packed, int heal)
+{
+    int life = (*packed >> SH_LIFE) & MSK_LIFE;
+    life += heal;
+    if (life > 255)
+    {
+        life = 255;
+    }
+    *packed &= ~(MSK_LIFE << SH_LIFE);
+    *packed |= (life & MSK_LIFE) << SH_LIFE;
+}
+
+struct Character apply_heal_struct(Character *c, int heal)
+{
+    c->life += heal;
+    if (c->life > 255)
+    {
+        c->life = 255;
+    }
+    return *c;
+}
 
 int main()
 {
@@ -371,15 +417,15 @@ int main()
     // Pack
     uint32_t packed = pack_character(p);
     printf("\nPacked Decimal: %u\n", packed);
-    set_life_packed(145, &packed);
+    set_life_packed(5, &packed);
     set_strength_packed(50, &packed);
     set_class_packed(5, &packed);
-    set_flag_bit_packed(4, &packed);
+    set_flag_bit_packed(3, &packed);
     set_level_packed(30, &packed);
     set_skills_packed(7, &packed);
     printf("\nForca Decimal: %d\n", get_strength_packed(&packed));
-    toggle_flag_bit_packed(4,&packed);
-    printf("\nFLAGS GET FLAGS: %u\n", get_flag_bit_packed(4,&packed));
+    toggle_flag_bit_packed(4, &packed);
+    printf("\nFLAGS GET FLAGS: %u\n", get_flag_bit_packed(4, &packed));
     // Salvar no arquivo
     save_character_to_file("char.bin", packed);
 
@@ -389,7 +435,8 @@ int main()
     // Carregar
     load_character_from_file("char.bin", &packed);
     printf("\nPacked Decimal carregado: %u\n", packed);
-
+    apply_damage_packed(&packed, 50);
+    apply_heal_packed(&packed,45);
     // Unpack
     Character u = unpack_character(packed);
 
