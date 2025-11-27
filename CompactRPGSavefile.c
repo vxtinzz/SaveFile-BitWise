@@ -36,12 +36,12 @@ typedef struct Character
 
 typedef enum
 {
-    CLASS_TYPE_MELEE,
-    CLASS_TYPE_RANGED,
-    CLASS_TYPE_MAGE_FIRE,
-    CLASS_TYPE_MAGE_ICE,
-    CLASS_TYPE_BERSERKER,
-    CLASS_TYPE_TANK,
+    CLASS_TYPE_DEATH_K,
+    CLASS_TYPE_SHADOW_S,
+    CLASS_TYPE_PYRO,
+    CLASS_TYPE_FROST_W,
+    CLASS_TYPE_MURDEROUS,
+    CLASS_TYPE_COLOSSUS,
     CLASS_TYPE_DRUID,
     CLASS_COUNT
 } Class_Type;
@@ -440,33 +440,12 @@ const char *has_status_effect(uint32_t *packed)
 
 const char *has_class_packed(uint32_t *packed)
 {
-    switch (get_class_bit_packed(packed))
-    {
-        case 1:
-        return CHARACTER_NAMES[CLASS_TYPE_MELEE];
-        break;
-        case 2:
-        return CHARACTER_NAMES[CLASS_TYPE_RANGED];
-        break;
-        case 3:
-        return CHARACTER_NAMES[CLASS_TYPE_MAGE_FIRE];
-        break;
-        case 4:
-        return CHARACTER_NAMES[CLASS_TYPE_MAGE_ICE];
-        break;
-        case 5:
-        return CHARACTER_NAMES[CLASS_TYPE_BERSERKER];
-        break;
-        case 6:
-        return CHARACTER_NAMES[CLASS_TYPE_TANK];
-        break;
-        case 7:
-        return CHARACTER_NAMES[CLASS_TYPE_DRUID];
-        break;
-        default:
-        return "Type unknown!";
-        break;
+    uint32_t index_class = get_class_bit_packed(packed);
+    if(index_class >= CLASS_COUNT){
+        return "Type Unknown";
     }
+    return CHARACTER_NAMES[index_class];
+
 }
 
 int calculate_attack_power(uint32_t *packed)
@@ -507,7 +486,7 @@ int main()
     printf("\nPacked Decimal: %u\n", packed);
     set_life_packed(5, &packed);
     set_strength_packed(50, &packed);
-    set_class_packed(3, &packed);
+    set_class_packed(CLASS_TYPE_DRUID, &packed);
     set_flag_bit_packed(2, &packed);
     set_flag_bit_packed(3, &packed);
     set_level_packed(30, &packed);
