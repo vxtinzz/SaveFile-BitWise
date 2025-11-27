@@ -22,8 +22,7 @@ const char *STATUS_EFFECTS_NAMES[] = {
     "Burning",
     "Frozen",
     "Stunned",
-    "Weakened"
-};
+    "Weakened"};
 
 typedef struct Character
 {
@@ -34,6 +33,28 @@ typedef struct Character
     unsigned level;
     unsigned skills;
 } Character;
+
+typedef enum
+{
+    CLASS_TYPE_MELEE,
+    CLASS_TYPE_RANGED,
+    CLASS_TYPE_MAGE_FIRE,
+    CLASS_TYPE_MAGE_ICE,
+    CLASS_TYPE_BERSERKER,
+    CLASS_TYPE_TANK,
+    CLASS_TYPE_DRUID,
+    CLASS_COUNT
+} Class_Type;
+
+const char *CHARACTER_NAMES[] = {
+    "Death Knight",
+    "Shadow Stalker",
+    "Pyrotechnic",
+    "Frost Warden",
+    "Murderous",
+    "Colossus",
+    "Grove Shaman"};
+
 // Bitpacking
 uint32_t pack_character(struct Character c)
 {
@@ -191,7 +212,7 @@ struct Character set_class_struct(int attributes, Character *c)
 {
     if (attributes > 7)
     {
-        attributes = 7;
+        attributes = 0;
     }
     else if (attributes < 0)
     {
@@ -205,7 +226,7 @@ void set_class_packed(int attributes, uint32_t *packed)
 {
     if (attributes > 7)
     {
-        attributes = 7;
+        attributes = 0;
     }
     else if (attributes < 0)
     {
@@ -406,11 +427,12 @@ const char *has_status_effect(uint32_t *packed)
     {
         if ((*packed >> (i + SH_FLAGS)) & 1u == 1)
         {
-            if(count > 0){
-               strcat(STATUS_RETURN, ", ");
+            if (count > 0)
+            {
+                strcat(STATUS_RETURN, ", ");
             }
-                strcat(STATUS_RETURN, STATUS_EFFECTS_NAMES[i]);
-                count++;
+            strcat(STATUS_RETURN, STATUS_EFFECTS_NAMES[i]);
+            count++;
         }
     }
     return STATUS_RETURN;
@@ -418,23 +440,37 @@ const char *has_status_effect(uint32_t *packed)
 
 const char *has_class_packed(uint32_t *packed)
 {
-    /*static char STATUS_RETURN[100];
-    int count = 0;
-    for (int i = 0; i < 5; i++)
+    switch (get_class_bit_packed(packed))
     {
-        if ((*packed >> (i + SH_FLAGS)) & 1u == 1)
-        {
-            if(count > 0){
-               strcat(STATUS_RETURN, ", ");
-            }
-                strcat(STATUS_RETURN, STATUS_EFFECTS_NAMES[i]);
-                count++;
-        }
+        case 1:
+        return CHARACTER_NAMES[CLASS_TYPE_MELEE];
+        break;
+        case 2:
+        return CHARACTER_NAMES[CLASS_TYPE_RANGED];
+        break;
+        case 3:
+        return CHARACTER_NAMES[CLASS_TYPE_MAGE_FIRE];
+        break;
+        case 4:
+        return CHARACTER_NAMES[CLASS_TYPE_MAGE_ICE];
+        break;
+        case 5:
+        return CHARACTER_NAMES[CLASS_TYPE_BERSERKER];
+        break;
+        case 6:
+        return CHARACTER_NAMES[CLASS_TYPE_TANK];
+        break;
+        case 7:
+        return CHARACTER_NAMES[CLASS_TYPE_DRUID];
+        break;
+        default:
+        return "Type unknown!";
+        break;
     }
-    return STATUS_RETURN;*/
 }
 
-int calculate_attack_power(uint32_t *packed){
+int calculate_attack_power(uint32_t *packed)
+{
     /*
     int strength = get_strength_packed(packed);
     int level = get_level_packed(packed);
@@ -471,7 +507,7 @@ int main()
     printf("\nPacked Decimal: %u\n", packed);
     set_life_packed(5, &packed);
     set_strength_packed(50, &packed);
-    set_class_packed(5, &packed);
+    set_class_packed(3, &packed);
     set_flag_bit_packed(2, &packed);
     set_flag_bit_packed(3, &packed);
     set_level_packed(30, &packed);
@@ -480,6 +516,7 @@ int main()
     toggle_flag_bit_packed(4, &packed);
     printf("\nFLAGS GET FLAGS: %u\n", get_flag_bit_packed(4, &packed));
     printf("\nFLAGS STATUS: %s\n", has_status_effect(&packed));
+    printf("\nCLASSE: %s\n", has_class_packed(&packed));
     // Salvar no arquivo
     save_character_to_file("char.bin", packed);
 
