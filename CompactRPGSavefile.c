@@ -17,13 +17,20 @@
 #define MSK_LEVEL 0b1111111
 #define MSK_SKILLS 0b111
 //------Effects----
+#define STS_POISON   (1u << 0 + SH_FLAGS)
+#define STS_BURN     (1u << 1 + SH_FLAGS)
+#define STS_FROZEN   (1u << 2 + SH_FLAGS)
+#define STS_STUN     (1u << 3 + SH_FLAGS)
+#define STS_WEAKEN   (1u << 4 + SH_FLAGS)
+
 const char *STATUS_EFFECTS_NAMES[] = {
     "Poisoned",
     "Burning",
     "Frozen",
     "Stunned",
-    "Weakened"};
-
+    "Weakened"
+};
+//--------Character Structure----
 typedef struct Character
 {
     unsigned strength;
@@ -55,6 +62,51 @@ const char *CHARACTER_NAMES[] = {
     "Colossus",
     "Grove Shaman"};
 
+typedef struct{
+    Character attacker;
+    Character target;
+    float multiplier;
+}AffinityRules;
+
+AffinityRules AFFINITYRULES[] = {
+    {CLASS_TYPE_PYRO, CLASS_TYPE_FROST_W, 1.25f},
+    {CLASS_TYPE_PYRO, CLASS_TYPE_DRUID, 1.5f},
+    {CLASS_TYPE_PYRO, CLASS_TYPE_SHADOW_S, 1.15f},
+    {CLASS_TYPE_PYRO, CLASS_TYPE_DEATH_K, 1.20f},
+    {CLASS_TYPE_PYRO, CLASS_TYPE_MURDEROUS, 0.8f},
+
+    {CLASS_TYPE_FROST_W, CLASS_TYPE_COLOSSUS, 1.4f},
+    {CLASS_TYPE_FROST_W, CLASS_TYPE_MURDEROUS, 1.25f},
+    {CLASS_TYPE_FROST_W, CLASS_TYPE_PYRO, 1.25f},
+    {CLASS_TYPE_FROST_W, CLASS_TYPE_SHADOW_S, 0.85f},
+    {CLASS_TYPE_FROST_W, CLASS_TYPE_DEATH_K, 0.85f},
+
+    {CLASS_TYPE_DEATH_K, CLASS_TYPE_PYRO, 0.90f},
+    {CLASS_TYPE_DEATH_K, CLASS_TYPE_FROST_W, 1.15f},
+    {CLASS_TYPE_DEATH_K, CLASS_TYPE_DRUID, 1.15f},
+    {CLASS_TYPE_DEATH_K, CLASS_TYPE_COLOSSUS, 0.75f},
+    {CLASS_TYPE_DEATH_K, CLASS_TYPE_MURDEROUS, 0.85f},
+
+    {CLASS_TYPE_SHADOW_S, CLASS_TYPE_FROST_W, 1.15f},
+    {CLASS_TYPE_SHADOW_S, CLASS_TYPE_PYRO, 0.90f},
+    {CLASS_TYPE_SHADOW_S, CLASS_TYPE_DRUID, 0.85f},
+
+    {CLASS_TYPE_MURDEROUS, CLASS_TYPE_DEATH_K, 1.15f},
+    {CLASS_TYPE_MURDEROUS, CLASS_TYPE_DRUID, 1.20f},
+    {CLASS_TYPE_MURDEROUS, CLASS_TYPE_FROST_W, 0.75f},
+    {CLASS_TYPE_MURDEROUS, CLASS_TYPE_COLOSSUS, 0.85f},
+
+    {CLASS_TYPE_COLOSSUS, CLASS_TYPE_DEATH_K, 1.25f},
+    {CLASS_TYPE_COLOSSUS, CLASS_TYPE_MURDEROUS, 1.15f},
+    {CLASS_TYPE_COLOSSUS, CLASS_TYPE_FROST_W, 0.65f},
+    {CLASS_TYPE_COLOSSUS, CLASS_TYPE_DRUID, 0.85f},
+
+    {CLASS_TYPE_DRUID, CLASS_TYPE_SHADOW_S, 1.15f},
+    {CLASS_TYPE_DRUID, CLASS_TYPE_COLOSSUS, 1.15f},
+    {CLASS_TYPE_DRUID, CLASS_TYPE_PYRO, 0.55f},
+    {CLASS_TYPE_DRUID, CLASS_TYPE_MURDEROUS, 0.80f},
+    {CLASS_TYPE_DRUID, CLASS_TYPE_DEATH_K, 0.85f},
+}
 // Bitpacking
 uint32_t pack_character(struct Character c)
 {
@@ -419,13 +471,13 @@ void remove_status_effect_packed(uint32_t *packed, int status_target)
     }
 }
 
-const char *has_status_effect(uint32_t *packed)
+const char *(uint32_t *packed)
 {
     static char STATUS_RETURN[100];
     int count = 0;
     for (int i = 0; i < 5; i++)
     {
-        if ((*packed >> (i + SH_FLAGS)) & 1u == 1)
+        if (((*packed >> (i + SH_FLAGS)) & 1u) == 1)
         {
             if (count > 0)
             {
@@ -441,19 +493,24 @@ const char *has_status_effect(uint32_t *packed)
 const char *has_class_packed(uint32_t *packed)
 {
     uint32_t index_class = get_class_bit_packed(packed);
-    if(index_class >= CLASS_COUNT){
+    if (index_class >= CLASS_COUNT)
+    {
         return "Type Unknown";
     }
     return CHARACTER_NAMES[index_class];
-
 }
 
-int calculate_attack_power(uint32_t *packed)
+int calculate_attack_power(uint32_t *attacker, uint32_t *target)
 {
-    /*
-    int strength = get_strength_packed(packed);
-    int level = get_level_packed(packed);
-    */
+    int strength = get_strength_packed(attacker);
+    int level = get_level_packed(attacker);
+    float attack = strength + (level * 0.3f);
+    
+    //verification debuffs
+        if (*attacker & STS_WEAKEN)
+            attack *= 0.7f;
+        if (has_class_packed(attacker))
+    
 }
 
 int main()
@@ -494,7 +551,7 @@ int main()
     printf("\nForca Decimal: %d\n", get_strength_packed(&packed));
     toggle_flag_bit_packed(4, &packed);
     printf("\nFLAGS GET FLAGS: %u\n", get_flag_bit_packed(4, &packed));
-    printf("\nFLAGS STATUS: %s\n", has_status_effect(&packed));
+    printf("\nFLAGS STATUS: %s\n", (&packed));
     printf("\nCLASSE: %s\n", has_class_packed(&packed));
     // Salvar no arquivo
     save_character_to_file("char.bin", packed);
