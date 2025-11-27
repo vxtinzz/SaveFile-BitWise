@@ -22,7 +22,8 @@ const char *STATUS_EFFECTS_NAMES[] = {
     "Burning",
     "Frozen",
     "Stunned",
-    "Weakened"};
+    "Weakened"
+};
 
 typedef struct Character
 {
@@ -318,7 +319,7 @@ uint32_t get_life_packed(uint32_t *packed)
     return (*packed >> SH_LIFE) & MSK_LIFE;
 }
 
-uint32_t get_class_packed(uint32_t *packed)
+uint32_t get_class_bit_packed(uint32_t *packed)
 {
     return (*packed >> SH_CLASS) & MSK_CLASS;
 }
@@ -413,6 +414,31 @@ const char *has_status_effect(uint32_t *packed)
         }
     }
     return STATUS_RETURN;
+}
+
+const char *has_class_packed(uint32_t *packed)
+{
+    /*static char STATUS_RETURN[100];
+    int count = 0;
+    for (int i = 0; i < 5; i++)
+    {
+        if ((*packed >> (i + SH_FLAGS)) & 1u == 1)
+        {
+            if(count > 0){
+               strcat(STATUS_RETURN, ", ");
+            }
+                strcat(STATUS_RETURN, STATUS_EFFECTS_NAMES[i]);
+                count++;
+        }
+    }
+    return STATUS_RETURN;*/
+}
+
+int calculate_attack_power(uint32_t *packed){
+    /*
+    int strength = get_strength_packed(packed);
+    int level = get_level_packed(packed);
+    */
 }
 
 int main()
