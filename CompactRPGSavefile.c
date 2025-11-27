@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 //---Shifts(LBS)---
 #define SH_STRENGTH 26
 #define SH_LIFE 18
@@ -17,19 +18,18 @@
 #define MSK_LEVEL 0b1111111
 #define MSK_SKILLS 0b111
 //------Effects----
-#define STS_POISON   (1u << 0 + SH_FLAGS)
-#define STS_BURN     (1u << 1 + SH_FLAGS)
-#define STS_FROZEN   (1u << 2 + SH_FLAGS)
-#define STS_STUN     (1u << 3 + SH_FLAGS)
-#define STS_WEAKEN   (1u << 4 + SH_FLAGS)
+#define STS_POISON (1u << (0 + SH_FLAGS))
+#define STS_BURN (1u << (1 + SH_FLAGS))
+#define STS_FROZEN (1u << (2 + SH_FLAGS))
+#define STS_STUN (1u << (3 + SH_FLAGS))
+#define STS_WEAKEN (1u << (4 + SH_FLAGS))
 
 const char *STATUS_EFFECTS_NAMES[] = {
     "Poisoned",
     "Burning",
     "Frozen",
     "Stunned",
-    "Weakened"
-};
+    "Weakened"};
 //--------Character Structure----
 typedef struct Character
 {
@@ -62,11 +62,12 @@ const char *CHARACTER_NAMES[] = {
     "Colossus",
     "Grove Shaman"};
 
-typedef struct{
-    Character attacker;
-    Character target;
+typedef struct
+{
+    int attacker;
+    int target;
     float multiplier;
-}AffinityRules;
+} AffinityRules;
 
 AffinityRules AFFINITYRULES[] = {
     {CLASS_TYPE_PYRO, CLASS_TYPE_FROST_W, 1.25f},
@@ -106,7 +107,7 @@ AffinityRules AFFINITYRULES[] = {
     {CLASS_TYPE_DRUID, CLASS_TYPE_PYRO, 0.55f},
     {CLASS_TYPE_DRUID, CLASS_TYPE_MURDEROUS, 0.80f},
     {CLASS_TYPE_DRUID, CLASS_TYPE_DEATH_K, 0.85f},
-}
+};
 // Bitpacking
 uint32_t pack_character(struct Character c)
 {
@@ -310,7 +311,7 @@ void set_flag_bit_packed(int bitIndex, uint32_t *packed)
     }
     else
     {
-        printf("Invalid BitIndex!");
+        fprintf(stderr, "Invalid BitIndex %d", bitIndex);
     }
 }
 
@@ -405,7 +406,7 @@ uint32_t get_flag_bit_packed(int bitindex, uint32_t packed)
     }
     else
     {
-        fprintf(stderr, "Invalid BitIndex", bitindex);
+        fprintf(stderr, "Invalid BitIndex %d", bitindex);
         return 0;
     }
 }
@@ -471,7 +472,7 @@ void remove_status_effect_packed(uint32_t *packed, int status_target)
     }
 }
 
-const char *(uint32_t *packed)
+const char *has_status_effect(uint32_t *packed)
 {
     static char STATUS_RETURN[100];
     int count = 0;
@@ -500,21 +501,46 @@ const char *has_class_packed(uint32_t *packed)
     return CHARACTER_NAMES[index_class];
 }
 
+float get_affinity_multiplier(int attacker, int target)
+{
+    for (int i = 0; i < sizeof(AFFINITYRULES) / sizeof(AffinityRules); i++)
+    {
+        if (AFFINITYRULES[i].attacker == attacker && AFFINITYRULES[i].target == target)
+        {
+            return AFFINITYRULES[i].multiplier;
+        }
+    }
+    return 1.0f;
+}
+
 int calculate_attack_power(uint32_t *attacker, uint32_t *target)
 {
     int strength = get_strength_packed(attacker);
     int level = get_level_packed(attacker);
     float attack = strength + (level * 0.3f);
+
+    // verification affinityrules
+    float bonusDmg = get_affinity_multiplier(get_class_bit_packed(attacker), get_class_bit_packed(target));
+    attack *= bonusDmg;
+    // verification debuffs on attacker
+    if (*attacker & STS_WEAKEN)
+        attack *= 0.7f;
+    // verification debuffs on target
+    if (*target & STS_BURN || *target & STS_FROZEN || *target & STS_POISON)
+    {
+        if ((rand() % 100) < 20)
+            attack *= 2;
+    }
+    if(attack < 1)
+    attack = 1;
     
-    //verification debuffs
-        if (*attacker & STS_WEAKEN)
-            attack *= 0.7f;
-        if (has_class_packed(attacker))
-    
+    return attack;
 }
 
 int main()
 {
+    //----Time-Variation--
+    srand(time(NULL));
     /*
     unsigned strength;
     unsigned life;
@@ -550,9 +576,10 @@ int main()
     set_skills_packed(7, &packed);
     printf("\nForca Decimal: %d\n", get_strength_packed(&packed));
     toggle_flag_bit_packed(4, &packed);
-    printf("\nFLAGS GET FLAGS: %u\n", get_flag_bit_packed(4, &packed));
-    printf("\nFLAGS STATUS: %s\n", (&packed));
+    printf("\nFLAGS GET FLAGS: %u\n", get_flag_bit_packed(40, packed));
+    printf("\nFLAGS STATUS: %s\n", has_status_effect(&packed));
     printf("\nCLASSE: %s\n", has_class_packed(&packed));
+    printf("\nCLASSE BIT: %d\n", get_class_bit_packed(&packed));
     // Salvar no arquivo
     save_character_to_file("char.bin", packed);
 
