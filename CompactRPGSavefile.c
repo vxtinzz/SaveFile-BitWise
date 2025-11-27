@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 //---Shifts(LBS)---
 #define SH_STRENGTH 26
 #define SH_LIFE 18
@@ -8,13 +9,20 @@
 #define SH_FLAGS 10
 #define SH_LEVEL 3
 #define SH_SKILLS 0
-//----- Masks-----
+//-----Masks-----
 #define MSK_STRENGTH 0b111111
 #define MSK_LIFE 0b11111111
 #define MSK_CLASS 0b111
 #define MSK_FLAGS 0b11111
 #define MSK_LEVEL 0b1111111
 #define MSK_SKILLS 0b111
+//------Effects----
+const char *STATUS_EFFECTS_NAMES[] = {
+    "Poisoned",
+    "Burning",
+    "Frozen",
+    "Stunned",
+    "Weakened"};
 
 typedef struct Character
 {
@@ -237,14 +245,6 @@ void clear_flags_packed(uint32_t *packed)
     *packed &= ~(MSK_FLAGS << SH_FLAGS);
 }
 
-void clear_flag_bit_packed(int bitIndex, uint32_t *packed)
-{
-    if (bitIndex < 5 && bitIndex >= 0)
-    {
-        *packed &= ~(1u << (bitIndex + SH_FLAGS));
-    }
-}
-
 void toggle_flag_bit_packed(int bitIndex, uint32_t *packed)
 {
     if (bitIndex >= 0 && bitIndex < 5)
@@ -323,15 +323,15 @@ uint32_t get_class_packed(uint32_t *packed)
     return (*packed >> SH_CLASS) & MSK_CLASS;
 }
 
-uint32_t get_flag_bit_packed(int bitindex, uint32_t *packed)
+uint32_t get_flag_bit_packed(int bitindex, uint32_t packed)
 {
-    if (bitindex >= 0 && bitindex < 5)
+    if (bitindex > 0 && bitindex < 5)
     {
-        return (*packed >> (bitindex + SH_FLAGS)) & 1u;
+        return (packed >> (bitindex + SH_FLAGS)) & 1u;
     }
     else
     {
-        printf("Invalid BitIndex");
+        fprintf(stderr, "Invalid BitIndex", bitindex);
         return 0;
     }
 }
@@ -389,6 +389,32 @@ struct Character apply_heal_struct(Character *c, int heal)
     return *c;
 }
 
+void remove_status_effect_packed(uint32_t *packed, int status_target)
+{
+    if (status_target < 5 && status_target >= 0)
+    {
+        *packed &= ~(1u << (status_target + SH_FLAGS));
+    }
+}
+
+const char *has_status_effect(uint32_t *packed)
+{
+    static char STATUS_RETURN[100];
+    int count = 0;
+    for (int i = 0; i < 5; i++)
+    {
+        if ((*packed >> (i + SH_FLAGS)) & 1u == 1)
+        {
+            if(count > 0){
+               strcat(STATUS_RETURN, ", ");
+            }
+                strcat(STATUS_RETURN, STATUS_EFFECTS_NAMES[i]);
+                count++;
+        }
+    }
+    return STATUS_RETURN;
+}
+
 int main()
 {
     /*
@@ -420,12 +446,14 @@ int main()
     set_life_packed(5, &packed);
     set_strength_packed(50, &packed);
     set_class_packed(5, &packed);
+    set_flag_bit_packed(2, &packed);
     set_flag_bit_packed(3, &packed);
     set_level_packed(30, &packed);
     set_skills_packed(7, &packed);
     printf("\nForca Decimal: %d\n", get_strength_packed(&packed));
     toggle_flag_bit_packed(4, &packed);
     printf("\nFLAGS GET FLAGS: %u\n", get_flag_bit_packed(4, &packed));
+    printf("\nFLAGS STATUS: %s\n", has_status_effect(&packed));
     // Salvar no arquivo
     save_character_to_file("char.bin", packed);
 
@@ -436,7 +464,7 @@ int main()
     load_character_from_file("char.bin", &packed);
     printf("\nPacked Decimal carregado: %u\n", packed);
     apply_damage_packed(&packed, 50);
-    apply_heal_packed(&packed,45);
+    apply_heal_packed(&packed, 45);
     // Unpack
     Character u = unpack_character(packed);
 
