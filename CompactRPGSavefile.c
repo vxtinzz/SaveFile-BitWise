@@ -503,7 +503,7 @@ const char *has_class_packed(uint32_t *packed)
 
 float get_affinity_multiplier(int attacker, int target)
 {
-    for (int i = 0; i < sizeof(AFFINITYRULES) / sizeof(AffinityRules); i++)
+    for (int i = 0; i < (sizeof(AFFINITYRULES) / sizeof(AffinityRules)); i++)
     {
         if (AFFINITYRULES[i].attacker == attacker && AFFINITYRULES[i].target == target)
         {
@@ -533,7 +533,7 @@ int calculate_attack_power(uint32_t *attacker, uint32_t *target)
     }
     if(attack < 1)
     attack = 1;
-    
+
     return attack;
 }
 
@@ -563,7 +563,7 @@ int main()
     printf("Flags:    %u\n", p.flags);
     printf("Level:    %u\n", p.level);
     printf("Skills:   %u\n", p.skills);
-    printf("Personagem eh valido:(1)SIM(0)NAO:%d\n", !validate_attributes(p));
+    printf("Personagem e valido:(1)SIM(0)NAO:%d\n", !validate_attributes(p));
     // Pack
     uint32_t packed = pack_character(p);
     printf("\nPacked Decimal: %u\n", packed);

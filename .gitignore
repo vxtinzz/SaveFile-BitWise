@@ -1,0 +1,20 @@
+# Compilados e executáveis
+*.exe
+*.bin
+*.o
+*.obj
+*.out
+
+# Arquivos de build
+build/
+dist/
+
+# Backups / temporários
+*.tmp
+*.bak
+*.log
+
+# Arquivos do editor
+.vscode/
+*.user
+*.cache
