@@ -23,6 +23,8 @@
 #define STS_FROZEN (1u << (2 + SH_FLAGS))
 #define STS_STUN (1u << (3 + SH_FLAGS))
 #define STS_WEAKEN (1u << (4 + SH_FLAGS))
+#define STS_HEAL (1u << (5 + SH_FLAGS))
+#define STS_SHIELD (1u << (6 + SH_FLAGS))
 
 const char *STATUS_EFFECTS_NAMES[] = {
     "Poisoned",
@@ -60,7 +62,7 @@ const char *CHARACTER_NAMES[] = {
     "Frost Warden",
     "Murderous",
     "Colossus",
-    "Grove Shaman"};
+    "Verdanth"};
 
 typedef struct
 {
@@ -70,6 +72,16 @@ typedef struct
 } AffinityRules;
 
 AffinityRules AFFINITYRULES[] = {
+    {CLASS_TYPE_DEATH_K, CLASS_TYPE_PYRO, 0.90f},
+    {CLASS_TYPE_DEATH_K, CLASS_TYPE_FROST_W, 1.15f},
+    {CLASS_TYPE_DEATH_K, CLASS_TYPE_DRUID, 1.15f},
+    {CLASS_TYPE_DEATH_K, CLASS_TYPE_COLOSSUS, 0.75f},
+    {CLASS_TYPE_DEATH_K, CLASS_TYPE_MURDEROUS, 0.85f},
+
+    {CLASS_TYPE_SHADOW_S, CLASS_TYPE_FROST_W, 1.15f},
+    {CLASS_TYPE_SHADOW_S, CLASS_TYPE_PYRO, 0.90f},
+    {CLASS_TYPE_SHADOW_S, CLASS_TYPE_DRUID, 0.85f},
+
     {CLASS_TYPE_PYRO, CLASS_TYPE_FROST_W, 1.25f},
     {CLASS_TYPE_PYRO, CLASS_TYPE_DRUID, 1.5f},
     {CLASS_TYPE_PYRO, CLASS_TYPE_SHADOW_S, 1.15f},
@@ -81,17 +93,7 @@ AffinityRules AFFINITYRULES[] = {
     {CLASS_TYPE_FROST_W, CLASS_TYPE_PYRO, 1.25f},
     {CLASS_TYPE_FROST_W, CLASS_TYPE_SHADOW_S, 0.85f},
     {CLASS_TYPE_FROST_W, CLASS_TYPE_DEATH_K, 0.85f},
-
-    {CLASS_TYPE_DEATH_K, CLASS_TYPE_PYRO, 0.90f},
-    {CLASS_TYPE_DEATH_K, CLASS_TYPE_FROST_W, 1.15f},
-    {CLASS_TYPE_DEATH_K, CLASS_TYPE_DRUID, 1.15f},
-    {CLASS_TYPE_DEATH_K, CLASS_TYPE_COLOSSUS, 0.75f},
-    {CLASS_TYPE_DEATH_K, CLASS_TYPE_MURDEROUS, 0.85f},
-
-    {CLASS_TYPE_SHADOW_S, CLASS_TYPE_FROST_W, 1.15f},
-    {CLASS_TYPE_SHADOW_S, CLASS_TYPE_PYRO, 0.90f},
-    {CLASS_TYPE_SHADOW_S, CLASS_TYPE_DRUID, 0.85f},
-
+   
     {CLASS_TYPE_MURDEROUS, CLASS_TYPE_DEATH_K, 1.15f},
     {CLASS_TYPE_MURDEROUS, CLASS_TYPE_DRUID, 1.20f},
     {CLASS_TYPE_MURDEROUS, CLASS_TYPE_FROST_W, 0.75f},
@@ -107,6 +109,44 @@ AffinityRules AFFINITYRULES[] = {
     {CLASS_TYPE_DRUID, CLASS_TYPE_PYRO, 0.55f},
     {CLASS_TYPE_DRUID, CLASS_TYPE_MURDEROUS, 0.80f},
     {CLASS_TYPE_DRUID, CLASS_TYPE_DEATH_K, 0.85f},
+};
+
+typedef struct{
+    const char *name;
+    Class_Type character;
+    float critical_chance;
+    uint32_t effect_flag;
+    unsigned int duration;
+}SkillData;
+
+SkillData skills_db[] = {
+    {"Abyssal Strike", CLASS_TYPE_DEATH_K, 10, STS_WEAKEN, 1},
+    {"Soul Drain", CLASS_TYPE_DEATH_K, 20, STS_POISON | STS_HEAL, 2},
+    {"Shadow Armor", CLASS_TYPE_DEATH_K, 10, STS_HEAL, 0},
+
+    {"Sneak Attack", CLASS_TYPE_SHADOW_S, 10, STS_WEAKEN, 1},
+    {"Poison Arrow", CLASS_TYPE_SHADOW_S, 5, STS_POISON, 2},
+    {"Shadow Step", CLASS_TYPE_SHADOW_S, 60, STS_SHIELD, 0},
+
+    {"Fireball", CLASS_TYPE_PYRO, 10, STS_BURN, 2},
+    {"Chaotic Blast", CLASS_TYPE_PYRO, 10, STS_STUN | STS_BURN, 2},
+    {"Flame Mark", CLASS_TYPE_PYRO, 10, STS_BURN | STS_WEAKEN, 2},
+
+    {"Frost Burst", CLASS_TYPE_FROST_W, 10, STS_FROZEN, 1},
+    {"Ice Prison", CLASS_TYPE_FROST_W, 10, STS_FROZEN | STS_STUN, 1},
+    {"Winter Storm", CLASS_TYPE_FROST_W, 10, STS_FROZEN | STS_WEAKEN, 1},
+
+    {"Berserk", CLASS_TYPE_MURDEROUS, 20, STS_WEAKEN, 1},
+    {"Rage Burst", CLASS_TYPE_MURDEROUS, 30, 0, 100},
+    {"War Cry", CLASS_TYPE_MURDEROUS, 40, 0, 100},
+
+    {"Seismic Strike", CLASS_TYPE_COLOSSUS, 10, STS_STUN, 1},
+    {"Earthquake Punch", CLASS_TYPE_COLOSSUS, 10, STS_WEAKEN, 1},
+    {"Granite Skin", CLASS_TYPE_COLOSSUS, 10, STS_SHIELD, 0},
+
+    {"Sap Drain", CLASS_TYPE_DRUID, 5, STS_HEAL | STS_POISON, 2},
+    {"Hemorrhagic Thorns", CLASS_TYPE_DRUID, 10, STS_WEAKEN | STS_POISON, 2},
+    {"Green Spirit's Call", CLASS_TYPE_DRUID, 15, STS_HEAL, 0},
 };
 // Bitpacking
 uint32_t pack_character(struct Character c)
@@ -575,7 +615,7 @@ int main()
     set_level_packed(30, &packed);
     set_skills_packed(7, &packed);
     printf("\nForca Decimal: %d\n", get_strength_packed(&packed));
-    toggle_flag_bit_packed(4, &packed);
+    //toggle_flag_bit_packed(4, &packed);
     printf("\nFLAGS GET FLAGS: %u\n", get_flag_bit_packed(40, packed));
     printf("\nFLAGS STATUS: %s\n", has_status_effect(&packed));
     printf("\nCLASSE: %s\n", has_class_packed(&packed));
@@ -601,6 +641,6 @@ int main()
     printf("Flags:    %u\n", u.flags);
     printf("Level:    %u\n", u.level);
     printf("Skills:   %u\n", u.skills);
-
+    printf("Attack:   %d\n", calculate_attack_power(&packed, &packed));
     return 0;
 }
