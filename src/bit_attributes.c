@@ -82,18 +82,33 @@ void set_level_packed(int attributes, uint32_t *packed)
     *packed |= (attributes & MSK_LEVEL) << SH_LEVEL;
 }
 
-void set_skills_packed(int attributes, uint32_t *packed)
+void set_flag_bit_packed(int bitIndex, uint32_t *packed)
 {
-    if (attributes > 7)
+    if (bitIndex < 3 && bitIndex >= 0)
     {
-        attributes = 7;
+        *packed |= (1u << (bitIndex + SH_SKILLS));
     }
-    else if (attributes < 0)
+    else
     {
-        attributes = 0;
+        fprintf(stderr, "Invalid BitIndex %d", bitIndex);
     }
+}
+
+void clear_skills_bit_packed(uint32_t *packed)
+{
     *packed &= ~(MSK_SKILLS << SH_SKILLS);
-    *packed |= (attributes & MSK_SKILLS) << SH_SKILLS;
+}
+
+void toggle_skills_packed(int bitIndex, uint32_t *packed)
+{
+    if (bitIndex < 0 || bitIndex >= MAX_SKILLS)
+        return;
+    uint32_t skills = get_skills_packed(packed);
+
+    skills ^= (1u << bitIndex);
+
+    *packed &= ~(MSK_SKILLS << SH_SKILLS);
+    *packed |= (skills & MSK_SKILLS) << SH_SKILLS;
 }
 
 uint32_t get_strength_packed(uint32_t *packed)
@@ -132,4 +147,31 @@ uint32_t get_level_packed(uint32_t *packed)
 uint32_t get_skills_packed(uint32_t *packed)
 {
     return (*packed >> SH_SKILLS) & MSK_SKILLS;
+}
+
+uint32_t get_unlocked_skills_packed(int bitIndex, uint32_t *packed)
+{
+    uint32_t unlocked = get_skills_packed(packed);
+    return (unlocked & (1u << bitIndex)) ? 1 : 0;
+}
+
+uint32_t apply_status_packed(uint32_t status, uint32_t *packed)
+{
+    return *packed |= status;
+}
+
+int get_skills_by_class(uint32_t classType, SkillData *skills_out)
+{
+    int count = 0;
+
+    for (int i = 0; i < SKILLS_COUNT; i++)
+    {
+        if (skills_db[i].character == classType)
+        {
+            skills_out[count++] = skills_db[i];
+            if (count >= MAX_SKILLS)
+                break;
+        }
+    }
+    return count;
 }

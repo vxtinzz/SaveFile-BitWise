@@ -2,11 +2,12 @@
 #include "../include/character.h"
 #include "../include/combat.h"
 #include "../include/bit_attributes.h"
-#include "../include/skills.h"
+#include "../include/skills_structs.h"
 #include "../include/status.h"
 #include "../include/affinity.h"
 #include <string.h>
 #include <time.h>
+#include <stdlib.h>
 
 void apply_damage_packed(uint32_t *packed, int damage)
 {
@@ -63,6 +64,7 @@ void remove_status_effect_packed(uint32_t *packed, int status_target)
 const char *has_status_effect(uint32_t *packed)
 {
     static char STATUS_RETURN[100];
+    STATUS_RETURN[0] = "\0";
     int count = 0;
     for (int i = 0; i < 5; i++)
     {
@@ -76,6 +78,9 @@ const char *has_status_effect(uint32_t *packed)
             count++;
         }
     }
+    if (count == 0)
+        strcpy(STATUS_RETURN, "None");
+
     return STATUS_RETURN;
 }
 
@@ -89,7 +94,7 @@ const char *has_class_packed(uint32_t *packed)
     return CHARACTER_NAMES[index_class];
 }
 
-float get_affinity_multiplier(int attacker, int target)
+float get_affinity_multiplier(uint32_t attacker, uint32_t target)
 {
     for (int i = 0; i < AFFINITY_COUNT; i++)
     {
@@ -101,7 +106,7 @@ float get_affinity_multiplier(int attacker, int target)
     return 1.0f;
 }
 
-int calculate_attack_power(uint32_t *attacker, uint32_t *target)
+int calculate_basic_attack(uint32_t *attacker, uint32_t *target)
 {
     int strength = get_strength_packed(attacker);
     int level = get_level_packed(attacker);
@@ -119,8 +124,63 @@ int calculate_attack_power(uint32_t *attacker, uint32_t *target)
         if ((rand() % 100) < 20)
             attack *= 2;
     }
-    if(attack < 1)
-    attack = 1;
+    if (attack < 1)
+        attack = 1;
 
-    return attack;
+    return (int)attack;
+}
+
+int calculate_skill_attack(uint32_t *attacker, uint32_t *target, SkillData *skill)
+{
+    if (skill == NULL)
+    {
+        return calculate_basic_attack(attacker, target);
+    }
+    int strength = get_strength_packed(attacker);
+    int level = get_level_packed(attacker);
+    float attack = strength + (level * 0.3f);
+
+    // verification affinityrules
+    float bonusDmg = get_affinity_multiplier(get_class_bit_packed(attacker), get_class_bit_packed(target));
+    attack *= bonusDmg;
+    // verification debuffs on attacker
+    if (*attacker & STS_WEAKEN)
+        attack *= 0.7f;
+    // verification debuffs on target
+    if (*target & STS_BURN || *target & STS_FROZEN || *target & STS_POISON)
+    {
+        if ((rand() % 100) < 20)
+            attack *= 1.5;
+    }
+
+    if ((rand() % 100) < skill->critical_chance)
+    {
+        attack *= 1.5;
+    }
+
+    apply_status_packed(STS_POISON, target);
+    if (attack < 1)
+        attack = 1;
+
+    if (skill->action == BF_HEAL)
+    {
+        if (skill->name == "Soul Drain")
+        {
+            float heal = (attack / 100) * skill->critical_chance;
+            apply_heal_packed(attacker, heal);
+        }
+        else
+        {
+            float heal = skill->critical_chance;
+            apply_heal_packed(attacker, heal);
+        }
+    }
+    else if (skill->action == BF_SHIELD)
+    {
+        for (int i = 0; i < STS_COUNT; i++)
+        {
+            remove_status_effect_packed(attacker, i);
+        }
+    }
+    return (int)attack;
 }

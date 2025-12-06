@@ -7,6 +7,7 @@
 #define STS_FROZEN (1u << (2 + SH_FLAGS))
 #define STS_STUN (1u << (3 + SH_FLAGS))
 #define STS_WEAKEN (1u << (4 + SH_FLAGS))
+#define STS_COUNT 5
 #define STS_HEAL (1u << (5 + SH_FLAGS))
 #define STS_SHIELD (1u << (6 + SH_FLAGS))
 
