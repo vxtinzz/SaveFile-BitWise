@@ -85,9 +85,21 @@ int main()
     SkillData teste[MAX_SKILLS];
 
     int count = get_skills_by_class(get_class_bit_packed(&packed), teste);
-
-    printf("Skills da classe (%d encontradas):\n", count);
-
+    const char *className = has_class_packed(&packed);
+    int unlocked_count = 0;
+    
+    for (int i = 0; i < count; i++)
+    {
+        int unlocked = get_unlocked_skills_packed(i, &packed);
+        if (unlocked)
+        {
+            unlocked_count++;
+        }
+    }
+    if(unlocked_count != 1)
+    printf("%d Skills da classe %s encontradas:\n", unlocked_count, className);
+    else
+    printf("%d Skill da classe %s encontrada:\n", unlocked_count, className);
     for (int i = 0; i < count; i++)
     {
         int unlocked = get_unlocked_skills_packed(i, &packed);

@@ -82,21 +82,16 @@ void set_level_packed(int attributes, uint32_t *packed)
     *packed |= (attributes & MSK_LEVEL) << SH_LEVEL;
 }
 
-void set_flag_bit_packed(int bitIndex, uint32_t *packed)
+void clear_skills_bit_packed(int bitIndex, uint32_t *packed)
 {
-    if (bitIndex < 3 && bitIndex >= 0)
+    if (bitIndex < 5 && bitIndex >= 0)
     {
-        *packed |= (1u << (bitIndex + SH_SKILLS));
+        *packed &= ~(1u << (bitIndex + SH_FLAGS));
     }
     else
     {
         fprintf(stderr, "Invalid BitIndex %d", bitIndex);
     }
-}
-
-void clear_skills_bit_packed(uint32_t *packed)
-{
-    *packed &= ~(MSK_SKILLS << SH_SKILLS);
 }
 
 void toggle_skills_packed(int bitIndex, uint32_t *packed)

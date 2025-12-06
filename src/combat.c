@@ -64,7 +64,7 @@ void remove_status_effect_packed(uint32_t *packed, int status_target)
 const char *has_status_effect(uint32_t *packed)
 {
     static char STATUS_RETURN[100];
-    STATUS_RETURN[0] = "\0";
+    strcpy(STATUS_RETURN, "");
     int count = 0;
     for (int i = 0; i < 5; i++)
     {
@@ -164,7 +164,7 @@ int calculate_skill_attack(uint32_t *attacker, uint32_t *target, SkillData *skil
 
     if (skill->action == BF_HEAL)
     {
-        if (skill->name == "Soul Drain")
+        if(strcmp(skill->name, "Soul Drain"))
         {
             float heal = (attack / 100) * skill->critical_chance;
             apply_heal_packed(attacker, heal);
