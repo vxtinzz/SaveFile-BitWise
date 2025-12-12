@@ -7,8 +7,8 @@
     void test_savefile();
     void test_skills_structs();
     void test_status();
-    /*
     void test_validation();
+    /*
     void test_affinity();
     void test_attributes();
 */
@@ -24,8 +24,8 @@ int main()
     test_savefile();
     test_skills_structs();
     test_status();
-    /* 
     test_validation();
+    /* 
     test_affinity();
     test_attributes();
     */
