@@ -55,7 +55,7 @@ void test_bitpack()
     assert(u2.life     == 255); // 8 bits = 0–255
     assert(u2.class    == 0);   // invalid class to be 0
     assert(u2.level    == 99);  // 7 bits = 0–99
-    assert(u2.skills   == 0b111); // 3 bits = até 7 (0b111)
+    assert(u2.skills   == 0b111); // 3 bits = 0 to 7 (0b111)
 
     printf("[OK] bitpack\n");
 }

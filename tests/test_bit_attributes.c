@@ -9,16 +9,16 @@ void test_bit_attributes()
     printf("[TEST] bit_attributes...\n");
 
     // -----------------------------------------
-    // Teste: set_strength_packed + get_strength
+    // Test: set_strength_packed + get_strength
     // -----------------------------------------
     uint32_t p = 0;
     set_strength_packed(50, &p);
     assert(get_strength_packed(&p) == 50);
 
-    set_strength_packed(999, &p); // limite deve cortar para 63
+    set_strength_packed(999, &p); // cut for 63
     assert(get_strength_packed(&p) == 63);
 
-    set_strength_packed(-10, &p); // limite mínimo
+    set_strength_packed(-10, &p); // minimum limit
     assert(get_strength_packed(&p) == 0);
 
     // -----------------------------------------
@@ -27,7 +27,7 @@ void test_bit_attributes()
     set_life_packed(200, &p);
     assert(get_life_packed(&p) == 200);
 
-    set_life_packed(500, &p); // limite 255
+    set_life_packed(500, &p); // limit 255
     assert(get_life_packed(&p) == 255);
 
     // -----------------------------------------
@@ -36,7 +36,7 @@ void test_bit_attributes()
     set_class_packed(3, &p);
     assert(get_class_bit_packed(&p) == 3);
 
-    set_class_packed(999, &p); // deve virar 0
+    set_class_packed(999, &p); // to be 0
     assert(get_class_bit_packed(&p) == 0);
 
     // -----------------------------------------
@@ -60,7 +60,7 @@ void test_bit_attributes()
     set_level_packed(30, &p);
     assert(get_level_packed(&p) == 30);
 
-    set_level_packed(200, &p); // limite 99
+    set_level_packed(200, &p); // limit 99
     assert(get_level_packed(&p) == 99);
 
     // -----------------------------------------
@@ -68,18 +68,18 @@ void test_bit_attributes()
     // -----------------------------------------
     p = 0;
 
-    // toggle de skill válida
+    // valid toggle skill
     toggle_skills_packed(1, &p);
     assert(get_unlocked_skills_packed(1, &p) == 1);
 
-    // toggle outra vez → desliga
+    // toggle again → turn off
     toggle_skills_packed(1, &p);
     assert(get_unlocked_skills_packed(1, &p) == 0);
 
-    // toggle inválida (fora do range)
+    // invalid toggle (out of range)
     toggle_skills_packed(4, &p);
 
-    // skills continuam 0
+    // skills remain 0
     assert(get_skills_packed(&p) == 0);
 
     // -----------------------------------------

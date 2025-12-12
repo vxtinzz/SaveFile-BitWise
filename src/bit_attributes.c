@@ -123,7 +123,7 @@ uint32_t get_class_bit_packed(uint32_t *packed)
 
 uint32_t get_flag_bit_packed(int bitindex, uint32_t packed)
 {
-    if (bitindex > 0 && bitindex < 5)
+    if (bitindex >= 0 && bitindex < 5)
     {
         return (packed >> (bitindex + SH_FLAGS)) & 1u;
     }
