@@ -21,3 +21,9 @@ Objective: To create an extremely efficient storage system, typical of older gam
 - Binary savefiles
 - Modular architecture
 - Complete unit testing suite
+
+ ![C](https://img.shields.io/badge/Language-C-blue)
+ ![Tests](https://img.shields.io/badge/Unit%20Tests-Complete-success)
+ ![Bitwise](https://img.shields.io/badge/Bitwise-Optimized-yellow)
+ ![Author](https://img.shields.io/badge/author-vxtinzzz-black)
+
