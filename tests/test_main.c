@@ -25,7 +25,7 @@ int main()
     test_validation();
     test_affinity();
     test_attributes();
-    
-    printf("\n=========== ALL TESTS FINISHED ==========\n");
+
+    printf("=========== ALL TESTS FINISHED ==========\n");
     return 0;
 }
