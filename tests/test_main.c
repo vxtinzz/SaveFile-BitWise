@@ -3,9 +3,9 @@
     void test_bit_attributes();
     void test_bitpack();
     void test_character();
-    
-    /*
     void test_combat();
+    /*
+    
     void test_savefile();
     void test_skills_structs();
     void test_status();
@@ -21,9 +21,10 @@ int main()
     test_bit_attributes();
     test_bitpack();
     test_character();
-
-    /* 
     test_combat();
+    
+    /* 
+    
     test_savefile();
     test_skills_structs();
     test_status();

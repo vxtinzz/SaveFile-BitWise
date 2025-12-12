@@ -157,14 +157,16 @@ int calculate_skill_attack(uint32_t *attacker, uint32_t *target, SkillData *skil
     {
         attack *= 1.5;
     }
-
-    apply_status_packed(STS_POISON, target);
+    if (skill->effect_flag > 0)
+    {
+        apply_status_packed(skill->effect_flag, target);
+    }
     if (attack < 1)
         attack = 1;
 
     if (skill->action == BF_HEAL)
     {
-        if(strcmp(skill->name, "Soul Drain"))
+        if (strcmp(skill->name, "Soul Drain") == 0)
         {
             float heal = (attack / 100) * skill->critical_chance;
             apply_heal_packed(attacker, heal);
