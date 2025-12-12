@@ -33,7 +33,7 @@ int main()
     p.life = 0;
     p.skills = 0;
     p.strength = 0;
-    printf("=== PERSONAGEM ORIGINAL ===\n");
+    printf("=== CHA ===\n");
     printf("Strength: %u\n", p.strength);
     printf("Life:     %u\n", p.life);
     printf("Class:    %u\n", p.class);

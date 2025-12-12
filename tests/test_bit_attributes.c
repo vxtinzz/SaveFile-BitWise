@@ -89,5 +89,5 @@ void test_bit_attributes()
     apply_status_packed(STS_POISON, &p);
     assert(p & STS_POISON);
 
-    printf("bit_attributes OK\n");
+    printf("[OK] bit_attributes\n");
 }

@@ -9,5 +9,5 @@ Character set_class_struct(int value, Character *c);
 Character set_level_struct(int value, Character *c);
 Character set_flags_struct(int attributes, Character *c);
 Character set_skills_struct(int value, Character *c);
-
+void print_character(Character c);
 #endif

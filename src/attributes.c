@@ -1,4 +1,6 @@
 #include "../include/attributes.h"
+#include "../include/combat.h"
+#include "../include/bitpack.h"
 
 struct Character set_strength_struct(int attributes, Character *c)
 {
@@ -82,4 +84,56 @@ struct Character set_skills_struct(int attributes, Character *c)
     }
     c->skills = attributes;
     return *c;
+}
+
+void print_character(Character c)
+{
+    printf("=== CHARACTER ===\n");
+    printf("Strength: %u\n", c.strength);
+    printf("Life:     %u\n", c.life);
+    printf("Class:    %u (%s)\n",
+           c.class,
+           (c.class < CLASS_COUNT ? CHARACTER_NAMES[c.class] : "UNKNOWN"));
+    printf("Flags:    %u\n", c.flags);
+    printf("Level:    %u\n", c.level);
+    printf("Skills:   %u\n", c.skills);
+
+    // Print status effects
+    printf("Status:   ");
+
+    int hasStatus = 0;
+    for (int i = 0; i < STS_COUNT; i++)
+    {
+        if (c.flags & (1u << i))
+        {
+            printf("%s ", STATUS_EFFECTS_NAMES[i]);
+            hasStatus = 1;
+        }
+    }
+    if (!hasStatus)
+        printf("None");
+
+    printf("\n");
+
+    // Unlocked Skills
+    printf("Unlocked Skills: ");
+
+    SkillData classSkills[MAX_SKILLS];
+    int count = get_skills_by_class(c.class, classSkills);
+
+    int printed = 0;
+
+    for (int i = 0; i < count; i++)
+    {
+        if (c.skills & (1u << i))
+        {
+            printf("[%s] ", classSkills[i].name);
+            printed = 1;
+        }
+    }
+
+    if (!printed)
+        printf("None");
+
+    printf("\n");
 }
