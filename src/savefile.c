@@ -22,6 +22,7 @@ void save_character_list_to_file(const char *filename, int count, const uint32_t
         return;
     }
     fwrite(characters_packed, sizeof(uint32_t), count, f);
+    fclose(f);
 }
 
 void load_character_from_file(const char *filename, uint32_t *packed)
@@ -33,6 +34,7 @@ void load_character_from_file(const char *filename, uint32_t *packed)
         return;
     }
     fread(packed, sizeof(uint32_t), 1, f);
+    fclose(f);
 }
 
 void load_character_list_from_file(const char *filename, int count, uint32_t *characters_packed)
@@ -44,4 +46,5 @@ void load_character_list_from_file(const char *filename, int count, uint32_t *ch
         return;
     }
     fread(characters_packed, sizeof(uint32_t), count, f);
+    fclose(f);
 }
