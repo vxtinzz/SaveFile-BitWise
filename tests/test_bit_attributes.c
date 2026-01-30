@@ -1,7 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdint.h>
-
 #include "../include/bit_attributes.h"
 
 void test_bit_attributes()
@@ -82,6 +81,37 @@ void test_bit_attributes()
     // skills remain 0
     assert(get_skills_packed(&p) == 0);
 
+    // set skill 0
+    set_skills_bit_packed(0, &p);
+    assert(get_unlocked_skills_packed(0, &p) == 1);
+    assert(get_skills_packed(&p) == (1u << 0));
+
+    // set another skill (independent bits)
+    set_skills_bit_packed(2, &p);
+    assert(get_unlocked_skills_packed(2, &p) == 1);
+    assert(get_unlocked_skills_packed(0, &p) == 1);
+    assert(get_skills_packed(&p) == ((1u << 0) | (1u << 2)));
+
+    // set same skill again (idempotent)
+    set_skills_bit_packed(2, &p);
+    assert(get_skills_packed(&p) == ((1u << 0) | (1u << 2)));
+
+    // clear skill after set
+    clear_skills_bit_packed(0, &p);
+    assert(get_unlocked_skills_packed(0, &p) == 0);
+    assert(get_unlocked_skills_packed(2, &p) == 1);
+
+    // clear remaining
+    clear_skills_bit_packed(2, &p);
+    assert(get_skills_packed(&p) == 0);
+
+    // invalid set (negative)
+    set_skills_bit_packed(-1, &p);
+    assert(get_skills_packed(&p) == 0);
+
+    // invalid set (out of range)
+    set_skills_bit_packed(MAX_SKILLS, &p);
+    assert(get_skills_packed(&p) == 0);
     // -----------------------------------------
     // Teste: apply_status_packed
     // -----------------------------------------

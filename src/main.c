@@ -52,8 +52,10 @@ int main()
     set_level_packed(30, &packed);
     toggle_flag_bit_packed(0, &packed);
     toggle_skills_packed(1, &packed);
-    toggle_skills_packed(2, &packed);
+    set_skills_bit_packed(0,&packed);
+    set_skills_bit_packed(1,&packed);
     set_skills_bit_packed(2,&packed);
+    set_skills_bit_packed(3,&packed);
     printf("\nForca Decimal: %d\n", get_strength_packed(&packed));
     toggle_flag_bit_packed(4, &packed);
     remove_status_effect_packed(&packed, 4);
@@ -108,7 +110,7 @@ int main()
         if (unlocked)
         {
             printf("[%d] Name: %s | Critical Chance: %.2f | Duration:%u\n",
-                   i, teste[i].name, teste[i].critical_chance, teste[i].duration);
+                   i+1, teste[i].name, teste[i].critical_chance, teste[i].duration);
         }
     }
     return 0;

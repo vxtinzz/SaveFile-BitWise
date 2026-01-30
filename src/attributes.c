@@ -1,6 +1,9 @@
 #include "../include/attributes.h"
 #include "../include/combat.h"
 #include "../include/bitpack.h"
+#include "../include/bit_attributes.h"
+#include <stdio.h>
+
 
 struct Character set_strength_struct(int attributes, Character *c)
 {
