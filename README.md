@@ -22,6 +22,13 @@ Objective: To create an extremely efficient storage system, typical of older gam
 - Modular architecture
 - Complete unit testing suite
 
+## Naming Conventions:
+- Constants/macros: UPPER_SNAKE_CASE
+- Structs/Enums: PascalCase
+- Functions: snake_case
+- Variables: camelCase
+
+
  ![C](https://img.shields.io/badge/Language-C-blue)
  ![Tests](https://img.shields.io/badge/Unit%20Tests-Complete-success)
  ![Bitwise](https://img.shields.io/badge/Bitwise-Optimized-yellow)

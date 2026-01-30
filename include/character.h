@@ -26,4 +26,14 @@ typedef struct Character
     unsigned level;
     unsigned skills;
 } Character;
+
+typedef struct CharacterPreset
+{
+    const char *name;
+    unsigned base_class;
+    unsigned base_life;
+    unsigned base_strength;
+    unsigned base_skills;
+}CharacterPreset;
+
 #endif

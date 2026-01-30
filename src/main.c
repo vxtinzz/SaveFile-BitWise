@@ -52,6 +52,7 @@ int main()
     set_level_packed(30, &packed);
     toggle_flag_bit_packed(0, &packed);
     toggle_skills_packed(1, &packed);
+    toggle_skills_packed(2, &packed);
     printf("\nForca Decimal: %d\n", get_strength_packed(&packed));
     toggle_flag_bit_packed(4, &packed);
     remove_status_effect_packed(&packed, 4);
