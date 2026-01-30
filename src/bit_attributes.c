@@ -86,7 +86,7 @@ void clear_skills_bit_packed(int bitIndex, uint32_t *packed)
 {
     if (bitIndex < 5 && bitIndex >= 0)
     {
-        *packed &= ~(1u << (bitIndex + SH_FLAGS));
+        *packed &= ~(1u << (bitIndex + SH_SKILLS));
     }
     else
     {
@@ -101,6 +101,19 @@ void toggle_skills_packed(int bitIndex, uint32_t *packed)
     uint32_t skills = get_skills_packed(packed);
 
     skills ^= (1u << bitIndex);
+
+    *packed &= ~(MSK_SKILLS << SH_SKILLS);
+    *packed |= (skills & MSK_SKILLS) << SH_SKILLS;
+}
+
+void set_skills_bit_packed(int bitIndex, uint32_t *packed)
+{
+    if (bitIndex < 0 || bitIndex >= MAX_SKILLS)
+        return;
+
+    uint32_t skills = get_skills_packed(packed);
+
+    skills |= (1u << bitIndex);
 
     *packed &= ~(MSK_SKILLS << SH_SKILLS);
     *packed |= (skills & MSK_SKILLS) << SH_SKILLS;
