@@ -84,7 +84,7 @@ const char *has_status_effect(uint32_t *packed)
     return STATUS_RETURN;
 }
 
-const char *has_class_packed(uint32_t *packed)
+const char *has_class_name_packed(uint32_t *packed)
 {
     uint32_t index_class = get_class_bit_packed(packed);
     if (index_class >= CLASS_COUNT)

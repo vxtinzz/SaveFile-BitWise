@@ -35,5 +35,4 @@ typedef struct CharacterPreset
     unsigned base_strength;
     unsigned base_skills;
 }CharacterPreset;
-
 #endif

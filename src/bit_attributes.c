@@ -183,3 +183,33 @@ int get_skills_by_class(uint32_t classType, SkillData *skills_out)
     }
     return count;
 }
+
+void print_unlocked_skills(uint32_t *packed){
+    SkillData skills[MAX_SKILLS];
+
+    int count = get_skills_by_class(get_class_bit_packed(&packed), skills);
+    const char *className = has_class_name_packed(&packed);
+    int unlocked_count = 0;
+    
+    for (int i = 0; i < count; i++)
+    {
+        int unlocked = get_unlocked_skills_packed(i, &packed);
+        if (unlocked)
+        {
+            unlocked_count++;
+        }
+    }
+    if(unlocked_count != 1)
+    printf("%d Skills da classe %s encontradas:\n", unlocked_count, className);
+    else
+    printf("%d Skill da classe %s encontrada:\n", unlocked_count, className);
+    for (int i = 0; i < count; i++)
+    {
+        int unlocked = get_unlocked_skills_packed(i, &packed);
+        if (unlocked)
+        {
+            printf("[%d] Name: %s | Critical Chance: %.2f | Duration:%u\n",
+                   i+1, skills[i].name, skills[i].critical_chance, skills[i].duration);
+        }
+    }
+}

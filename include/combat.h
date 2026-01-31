@@ -10,7 +10,7 @@ void apply_heal_packed(uint32_t *packed, int heal);
 struct Character apply_heal_struct(Character *c, int heal);
 void remove_status_effect_packed(uint32_t *packed, int status_target);
 const char *has_status_effect(uint32_t *packed);
-const char *has_class_packed(uint32_t *packed);
+const char *has_class_name_packed(uint32_t *packed);
 float get_affinity_multiplier(uint32_t attacker, uint32_t target);
 int calculate_basic_attack(uint32_t *attacker, uint32_t *target);
 int calculate_skill_attack(uint32_t *attacker, uint32_t *target, SkillData *skill);

@@ -86,32 +86,6 @@ int main()
     printf("Attack:   %d\n", calculate_basic_attack(&packed, &packed));
     printf("Skills Ativas:   %u %u %u\n", get_unlocked_skills_packed(0, &packed), get_unlocked_skills_packed(1, &packed), get_unlocked_skills_packed(2, &packed));
 
-    SkillData teste[MAX_SKILLS];
-
-    int count = get_skills_by_class(get_class_bit_packed(&packed), teste);
-    const char *className = has_class_packed(&packed);
-    int unlocked_count = 0;
-    
-    for (int i = 0; i < count; i++)
-    {
-        int unlocked = get_unlocked_skills_packed(i, &packed);
-        if (unlocked)
-        {
-            unlocked_count++;
-        }
-    }
-    if(unlocked_count != 1)
-    printf("%d Skills da classe %s encontradas:\n", unlocked_count, className);
-    else
-    printf("%d Skill da classe %s encontrada:\n", unlocked_count, className);
-    for (int i = 0; i < count; i++)
-    {
-        int unlocked = get_unlocked_skills_packed(i, &packed);
-        if (unlocked)
-        {
-            printf("[%d] Name: %s | Critical Chance: %.2f | Duration:%u\n",
-                   i+1, teste[i].name, teste[i].critical_chance, teste[i].duration);
-        }
-    }
+    print_unlocked_skills(&packed);
     return 0;
 }

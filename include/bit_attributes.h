@@ -30,5 +30,6 @@ uint32_t get_level_packed(uint32_t *packed);
 uint32_t get_skills_packed(uint32_t *packed);
 uint32_t get_unlocked_skills_packed(int bitIndex, uint32_t *packed);
 int get_skills_by_class(uint32_t classType, SkillData *skills_out);
+void print_unlocked_skills(uint32_t *packed);
 
 #endif
