@@ -61,7 +61,7 @@ int main()
     remove_status_effect_packed(&packed, 4);
     printf("\nFLAGS GET FLAGS: %u\n", get_flag_bit_packed(40, packed));
     printf("\nFLAGS STATUS: %s\n", has_status_effect(&packed));
-    printf("\nCLASSE: %s\n", has_class_packed(&packed));
+    printf("\nCLASSE: %s\n", has_class_name_packed(&packed));
     printf("\nCLASSE BIT: %d\n", get_class_bit_packed(&packed));
     // Salvar no arquivo
     save_character_to_file("data/char.bin", packed);

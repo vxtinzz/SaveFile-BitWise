@@ -1,4 +1,5 @@
 #include "../include/bit_attributes.h"
+#include "../include/combat.h"
 #include <stdio.h>
 
 void set_strength_packed(int attributes, uint32_t *packed)
@@ -187,13 +188,13 @@ int get_skills_by_class(uint32_t classType, SkillData *skills_out)
 void print_unlocked_skills(uint32_t *packed){
     SkillData skills[MAX_SKILLS];
 
-    int count = get_skills_by_class(get_class_bit_packed(&packed), skills);
-    const char *className = has_class_name_packed(&packed);
+    int count = get_skills_by_class(get_class_bit_packed(packed), skills);
+    const char *className = has_class_name_packed(packed);
     int unlocked_count = 0;
     
     for (int i = 0; i < count; i++)
     {
-        int unlocked = get_unlocked_skills_packed(i, &packed);
+        int unlocked = get_unlocked_skills_packed(i, packed);
         if (unlocked)
         {
             unlocked_count++;
@@ -205,7 +206,7 @@ void print_unlocked_skills(uint32_t *packed){
     printf("%d Skill da classe %s encontrada:\n", unlocked_count, className);
     for (int i = 0; i < count; i++)
     {
-        int unlocked = get_unlocked_skills_packed(i, &packed);
+        int unlocked = get_unlocked_skills_packed(i, packed);
         if (unlocked)
         {
             printf("[%d] Name: %s | Critical Chance: %.2f | Duration:%u\n",

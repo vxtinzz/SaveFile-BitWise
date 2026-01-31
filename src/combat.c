@@ -98,7 +98,7 @@ float get_affinity_multiplier(uint32_t attacker, uint32_t target)
 {
     for (int i = 0; i < AFFINITY_COUNT; i++)
     {
-        if (AFFINITYRULES[i].attacker == attacker && AFFINITYRULES[i].target == target)
+        if (AFFINITYRULES[i].attacker == (uint32_t)attacker && AFFINITYRULES[i].target == (uint32_t)target)
         {
             return AFFINITYRULES[i].multiplier;
         }
