@@ -2,8 +2,7 @@
 #define BIT_ATTRIBUTES_H
 
 #include <stdint.h>
-#include "character.h"
-#include "config.h"
+#include "character_types.h"
 #include "skills_structs.h"
 
 // setters
@@ -29,6 +28,7 @@ uint32_t get_flag_bit_packed(int bitindex, uint32_t packed);
 uint32_t get_level_packed(uint32_t *packed);
 uint32_t get_skills_packed(uint32_t *packed);
 uint32_t get_unlocked_skills_packed(int bitIndex, uint32_t *packed);
+const char *has_class_name_packed(uint32_t *packed);
 int get_skills_by_class(uint32_t classType, SkillData *skills_out);
 void print_unlocked_skills(uint32_t *packed);
 

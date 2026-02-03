@@ -8,10 +8,10 @@
 #include "../include/bit_attributes.h"
 #include "../include/bitpack.h"
 #include "../include/savefile.h"
-#include "../include/character.h"
+#include "../include/character_types.h"
 #include "../include/combat.h"
 #include "../include/skills_structs.h"
-#include "../include/status.h"
+#include "../include/status_config.h"
 #include "../include/validation.h"
 
 int main()
@@ -27,19 +27,13 @@ int main()
     unsigned skills;*/
     // Make a character manually
     Character p;
-    p.class = 0;
+    p.classId = NULL;
     p.flags = 0;
     p.level = 0;
     p.life = 0;
-    p.skills = 0;
+    p.skills = 2;
     p.strength = 0;
-    printf("=== CHA ===\n");
-    printf("Strength: %u\n", p.strength);
-    printf("Life:     %u\n", p.life);
-    printf("Class:    %u\n", p.class);
-    printf("Flags:    %u\n", p.flags);
-    printf("Level:    %u\n", p.level);
-    printf("Skills:   %u\n", p.skills);
+    print_character(p);
     printf("Personagem e valido:(1)SIM(0)NAO:%d\n", !validate_attributes(p));
     // Pack
     uint32_t packed = pack_character(p);
@@ -79,7 +73,7 @@ int main()
     printf("\n=== PERSONAGEM DESCOMPACTADO ===\n");
     printf("Strength: %u\n", u.strength);
     printf("Life:     %u\n", u.life);
-    printf("Class:    %u\n", u.class);
+    printf("Class:    %u\n", u.classId);
     printf("Flags:    %u\n", u.flags);
     printf("Level:    %u\n", u.level);
     printf("Skills:   %u\n", u.skills);

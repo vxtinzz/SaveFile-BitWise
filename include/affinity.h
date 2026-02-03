@@ -1,8 +1,7 @@
 #ifndef AFFINITY_H
 #define AFFINITY_H
 
-typedef struct
-{
+typedef struct {
     int attacker;
     int target;
     float multiplier;
