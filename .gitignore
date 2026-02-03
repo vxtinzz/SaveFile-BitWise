@@ -1,5 +1,6 @@
 # Compilados e executáveis
 *.exe
+backlog.c
 *.bin
 *.o
 *.obj
