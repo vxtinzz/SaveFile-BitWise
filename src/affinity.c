@@ -1,6 +1,5 @@
-#include "../include/character.h"
+#include "../include/character_types.h"
 #include "../include/affinity.h"
-#include "../include/config.h"
 
 AffinityRules AFFINITYRULES[] = {
     {CLASS_TYPE_DEATH_K, CLASS_TYPE_PYRO, 0.90f},

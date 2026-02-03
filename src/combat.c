@@ -1,9 +1,9 @@
-#include "../include/config.h"
-#include "../include/character.h"
+#include "../include/bit_config.h"
+#include "../include/character_types.h"
 #include "../include/combat.h"
 #include "../include/bit_attributes.h"
 #include "../include/skills_structs.h"
-#include "../include/status.h"
+#include "../include/status_config.h"
 #include "../include/affinity.h"
 #include <string.h>
 #include <time.h>
@@ -82,16 +82,6 @@ const char *has_status_effect(uint32_t *packed)
         strcpy(STATUS_RETURN, "None");
 
     return STATUS_RETURN;
-}
-
-const char *has_class_name_packed(uint32_t *packed)
-{
-    uint32_t index_class = get_class_bit_packed(packed);
-    if (index_class >= CLASS_COUNT)
-    {
-        return "Type Unknown";
-    }
-    return CHARACTER_NAMES[index_class];
 }
 
 float get_affinity_multiplier(uint32_t attacker, uint32_t target)

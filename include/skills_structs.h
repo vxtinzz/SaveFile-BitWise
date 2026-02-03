@@ -1,12 +1,13 @@
 #ifndef SKILLS_H
 #define SKILLS_H
 #define MAX_SKILLS 3
-#include "character.h"
-#include "status.h"
+#include "character_types.h"
+#include "status_config.h"
 
 typedef enum {
     BF_SHIELD,
     BF_HEAL,
+    BF_NULL,
     BF_COUNT
 }SkillAction;
 

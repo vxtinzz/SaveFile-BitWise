@@ -1,7 +1,5 @@
-#ifndef CHARACTER_H
-#define CHARACTER_H
-#include "config.h"
-#include <stdint.h>
+#ifndef CHARACTER_TYPES_H
+#define CHARACTER_TYPES_H
 
 typedef enum
 {
@@ -15,13 +13,11 @@ typedef enum
     CLASS_COUNT
 } Class_Type;
 
-extern const char *CHARACTER_NAMES[];
-
 typedef struct Character
 {
     unsigned strength;
     unsigned life;
-    unsigned class;
+    unsigned classId;
     unsigned flags;
     unsigned level;
     unsigned skills;
@@ -30,9 +26,12 @@ typedef struct Character
 typedef struct CharacterPreset
 {
     const char *name;
-    unsigned base_class;
-    unsigned base_life;
-    unsigned base_strength;
-    unsigned base_skills;
+    unsigned baseClass;
+    unsigned baseLife;
+    unsigned baseStrength;
+    unsigned baseSkills;
 }CharacterPreset;
+
+extern const char *CHARACTER_NAMES[];
+extern const CharacterPreset CHARACTER_PRESET[];
 #endif

@@ -1,7 +1,7 @@
 #ifndef ATTRIBUTES_H
 #define ATTRIBUTES_H
 
-#include "character.h"
+#include "character_types.h"
 
 Character set_strength_struct(int value, Character *c);
 Character set_life_struct(int value, Character *c);

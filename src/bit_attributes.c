@@ -1,5 +1,5 @@
 #include "../include/bit_attributes.h"
-#include "../include/combat.h"
+#include "../include/bit_config.h"
 #include <stdio.h>
 
 void set_strength_packed(int attributes, uint32_t *packed)
@@ -167,6 +167,16 @@ uint32_t get_unlocked_skills_packed(int bitIndex, uint32_t *packed)
 uint32_t apply_status_packed(uint32_t status, uint32_t *packed)
 {
     return *packed |= status;
+}
+
+const char *has_class_name_packed(uint32_t *packed)
+{
+    uint32_t index_class = get_class_bit_packed(packed);
+    if (index_class >= CLASS_COUNT)
+    {
+        return "Type Unknown";
+    }
+    return CHARACTER_NAMES[index_class];
 }
 
 int get_skills_by_class(uint32_t classType, SkillData *skills_out)

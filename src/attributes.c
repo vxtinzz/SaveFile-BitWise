@@ -1,5 +1,4 @@
 #include "../include/attributes.h"
-#include "../include/combat.h"
 #include "../include/bitpack.h"
 #include "../include/bit_attributes.h"
 #include <stdio.h>
@@ -43,7 +42,7 @@ struct Character set_class_struct(int attributes, Character *c)
     {
         attributes = 0;
     }
-    c->class = attributes;
+    c->classId = attributes;
     return *c;
 }
 
@@ -95,8 +94,8 @@ void print_character(Character c)
     printf("Strength: %u\n", c.strength);
     printf("Life:     %u\n", c.life);
     printf("Class:    %u (%s)\n",
-           c.class,
-           (c.class < CLASS_COUNT ? CHARACTER_NAMES[c.class] : "UNKNOWN"));
+           c.classId,
+           (c.classId < CLASS_COUNT ? CHARACTER_NAMES[c.classId] : "UNKNOWN"));
     printf("Flags:    %u\n", c.flags);
     printf("Level:    %u\n", c.level);
     printf("Skills:   %u\n", c.skills);
@@ -122,7 +121,7 @@ void print_character(Character c)
     printf("Unlocked Skills: ");
 
     SkillData classSkills[MAX_SKILLS];
-    int count = get_skills_by_class(c.class, classSkills);
+    int count = get_skills_by_class(c.classId, classSkills);
 
     int printed = 0;
 
