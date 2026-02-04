@@ -176,7 +176,7 @@ const char *has_class_name_packed(uint32_t *packed)
     {
         return "Type Unknown";
     }
-    return CHARACTER_NAMES[index_class];
+    return CHARACTER_PRESET[index_class].name;
 }
 
 int get_skills_by_class(uint32_t classType, SkillData *skills_out)

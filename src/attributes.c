@@ -95,7 +95,7 @@ void print_character(Character c)
     printf("Life:     %u\n", c.life);
     printf("Class:    %u (%s)\n",
            c.classId,
-           (c.classId < CLASS_COUNT ? CHARACTER_NAMES[c.classId] : "UNKNOWN"));
+           (c.classId < CLASS_COUNT ? CHARACTER_PRESET[c.classId].name : "UNKNOWN"));
     printf("Flags:    %u\n", c.flags);
     printf("Level:    %u\n", c.level);
     printf("Skills:   %u\n", c.skills);

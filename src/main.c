@@ -27,7 +27,7 @@ int main()
     unsigned skills;*/
     // Make a character manually
     Character p;
-    p.classId = NULL;
+    p.classId = -1;
     p.flags = 0;
     p.level = 0;
     p.life = 0;

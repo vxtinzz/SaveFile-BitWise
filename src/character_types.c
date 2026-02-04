@@ -1,15 +1,6 @@
 #include "../include/character_types.h"
 #include "../include/skills_structs.h"
 
-const char *CHARACTER_NAMES[] = {
-    "Death Knight",
-    "Shadow Stalker",
-    "Pyrotechnic",
-    "Frost Warden",
-    "Murderous",
-    "Colossus",
-    "Verdanth"};
-
     const CharacterPreset CHARACTER_PRESET[CLASS_COUNT] = {
         [CLASS_TYPE_DEATH_K] = {
         .name = "Death Knight",
